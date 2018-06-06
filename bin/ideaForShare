@@ -1,0 +1,38 @@
+#!/bin/bash
+
+SERVICE_ROOT=/usr/local/lib/ideaForShare
+SERVICE_JAR=ideaForShare.jar
+
+JAVA_OPTS="-Xms1024m -Xmx1024m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseCMSInitiatingOccupancyOnly"
+JDWP_OPTS=
+
+javaexec=java
+
+if [ "$1" == "jdwp" ] ;then
+	JDWP_OPTS="-Xdebug -server -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1002"
+	shift
+fi
+
+if [ ! -n "$1" -o "$1" == "start" ] ;then
+	cd $SERVICE_ROOT
+	exec $javaexec $JAVA_OPTS $JDWP_OPTS -jar $SERVICE_JAR>log 2>&1 &
+elif [ "$1" == run ] ;then
+	cd $SERVICE_ROOT
+	exec $javaexec $JAVA_OPTS $JDWP_OPTS -jar $SERVICE_JAR
+elif [ "$1" == "stop" ] ;then
+	PID=`(ps -ef | grep $SERVICE_JAR | grep -v grep | awk '{print $2}')`
+	if [ "$PID" == "" ]; then
+		echo "Not running"
+	else
+		ps -ef | grep $SERVICE_JAR | grep -v grep | awk '{print $2}' | xargs kill -9
+	fi
+elif [ "$1" == "status" ] ;then
+	PID=`(ps -ef | grep $SERVICE_JAR | grep -v grep | awk '{print $2}')`
+	if [ "$PID" == "" ]; then
+		echo "Not running"
+	else
+		echo "Running, PID is" "$PID"
+	fi
+elif [ "$1" == "log" ] ;then
+	tail -100f /var/log/ideaForShare/ideaForShare.log
+fi

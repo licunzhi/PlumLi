@@ -1,0 +1,28 @@
+<project name="ideaForShare-deploy" default="build" basedir="..">
+
+    <target name="deploy">
+        <sshexec host="${HOST}" username="${USER}" password="${PASSWD}" failonerror="false" trust="true" command="
+			tapp_api stop;
+			cd ${SERVICE_ROOT};
+			rm -rf config/*;
+			rm -rf tapp_api.jar;
+			"/>
+        <scp todir="${USER}:${PASSWD}@${HOST}:${SERVICE_ROOT}" trust="true">
+            <fileset dir="target">
+                <include name="tapp_api.jar"/>
+            </fileset>
+        </scp>
+        <scp todir="${USER}:${PASSWD}@${HOST}:${SERVICE_ROOT}/config" trust="true">
+            <fileset dir="config">
+                <include name="application.properties"/>
+            </fileset>
+        </scp>
+        <sshexec host="${HOST}" username="${USER}" password="${PASSWD}" trust="true" command="
+			tapp_api start;
+			"/>
+    </target>
+
+    <target name="build">
+        <antcall target="deploy"></antcall>
+    </target>
+</project>

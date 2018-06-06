@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.plumLi.ideaForShare</groupId>
+	<artifactId>ideaForShare</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>ideaForShare</name>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.9.RELEASE</version>
+		<relativePath />
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+
+		<bricks.base>1.0.5</bricks.base>
+		<mybatis.version>1.3.1</mybatis.version>
+		<mysql.version>5.1.45</mysql.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.generator</groupId>
+			<artifactId>mybatis-generator-core</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!-- 分页插件 -->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<!-- alibaba的druid数据库连接池 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<!--POI start-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.6</version>
+		</dependency>
+		<!--POI end-->
+
+
+	</dependencies>
+
+	<build>
+		<finalName>tapp_api</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<configuration>
+					<configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>
+					<overwrite>true</overwrite>
+					<verbose>true</verbose>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<version>2.0.1</version>
+				<configuration>
+					<copyright>2018, TrendyCloud</copyright>
+					<group>Development</group>
+					<description>Maven Recipe: RPM Package.</description>
+					<autoRequires>false</autoRequires>
+					<defaultFilemode>644</defaultFilemode>
+					<defaultDirmode>755</defaultDirmode>
+					<defaultUsername>root</defaultUsername>
+					<defaultGroupname>root</defaultGroupname>
+					<needarch>x86_64</needarch>
+					<mappings>
+						<mapping>
+							<directory>/usr/local/lib/${name}</directory>
+							<sources>
+								<source>
+									<location>${basedir}/target/${name}.jar</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>/usr/local/lib/${name}/config</directory>
+							<sources>
+								<source>
+									<location>${basedir}/config</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<filemode>755</filemode>
+							<directory>/usr/local/lib/${name}/bin</directory>
+							<sources>
+								<source>
+									<location>${basedir}/bin</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<filemode>755</filemode>
+							<directory>/etc/rc.d/init.d</directory>
+							<sources>
+								<source>
+									<location>${basedir}/init.d</location>
+									<includes>
+										<include>*</include>
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<filemode>755</filemode>
+							<directory>/user/local/bin</directory>
+							<sources>
+								<source>
+									<location>${basedir}/init.d</location>
+									<includes>
+										<include>*</include>
+									</includes>
+								</source>
+							</sources>
+						</mapping>
+					</mappings>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

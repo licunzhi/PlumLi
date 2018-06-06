@@ -1,0 +1,45 @@
+#!/bin/bash
+# chkconfig: - 92 75
+# description: bricks demo
+
+SERVICE_ROOT=/usr/local/lib/ideaForShare
+SCRIPT_NAME=ideaForShare
+
+start() {
+$SERVICE_ROOT/bin/$SCRIPT_NAME start
+}
+
+stop() {
+$SERVICE_ROOT/bin/$SCRIPT_NAME stop
+}
+
+status() {
+$SERVICE_ROOT/bin/$SCRIPT_NAME status
+}
+
+log() {
+$SERVICE_ROOT/bin/$SCRIPT_NAME log
+}
+
+# See how we were called.
+case "$1" in
+  start)
+start
+;;
+  status)
+status
+;;
+  stop)
+stop
+;;
+  restart)
+stop
+start
+;;
+  log)
+log
+;;
+  *)
+echo $"Usage: $0 {start|stop|status|restart|log}"
+exit 2
+esac
